@@ -7,23 +7,23 @@ BCam is based on the [RP2040 Raspberry Pi Pico](https://www.raspberrypi.com/docu
 
 BCam was originally designed as a teaching tool for physics classrooms.  The [documentation](doc/) includes demos, lab handouts, and other teaching material.
 
-##Build your own!
+## Build your own!
 
 This repo contains everything you need to build a BCam:
+* [2d/](2d/): 2-d design files (label graphics)
 * [pcb/](pcb/): Printed circuit board files
 * [src/](src/): Arduino source code
 * [cad/](cad/): 3-d design files
 * [doc/](doc/): Documentation
 * [bom.md](bom.md): Bill of materials
+
 BCam is designed to be built by hand.  All surface-mount parts are hand-solderable (some skill required).  The case is 3-d printed.  You can use a desktop CNC machine to mill your own printed circuit board, or have it made by an online board manufacturer such as [JLCPCB](https://jlcpcb.com/), [PCBWay](https://www.pcbway.com/), or [OSHPark](https://oshpark.com/).
 
 BCam was originally developed as a project for [Fab Academy](https://fabacademy.org/), a hands-on global class in rapid prototyping and digital fabrication.  The original project documentation is [archived at Fab Academy's site](https://fabacademy.org/2023/labs/wheaton/students/jason-goodman/final-project/index.html), but is superseded by this repo.
 
-## License
+## Copyright and License
 
 Copyright (c) 2023-2025 Jason Goodman <jcgoodman@gmail.com>
-
-Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
 
 This work is licensed under a
 [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
@@ -32,4 +32,3 @@ This work is licensed under a
 
 [cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
 [cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
-[cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
