@@ -60,7 +60,6 @@ enum model_id {TMAG_A = 0x35, TMAG_B = 0x22, TMAG_C = 0x78, TMAG_D = 0x44};
 #define N_MODELS 3
 model_id model_id_list[N_MODELS] = {TMAG_A, TMAG_B, TMAG_C}; // Which models are in our array?
 
-bool available[N_X][N_Y];  // True if sensor is available
 
 // ------------------------------------------------------
 // ===== 2. TFT LCD configuration
@@ -244,6 +243,7 @@ uint8_t read_tmag_sensor(int x,int y,float *Bx_ptr,float *By_ptr,float *Bz_ptr) 
 
 int dx[N_SENSOR_COLUMNS][N_SENSOR_ROWS], dy[N_SENSOR_COLUMNS][N_SENSOR_ROWS], dz[N_SENSOR_COLUMNS][N_SENSOR_ROWS];
 float Bx_smooth[N_SENSOR_COLUMNS][N_SENSOR_ROWS], By_smooth[N_SENSOR_COLUMNS][N_SENSOR_ROWS], Bz_smooth[N_SENSOR_COLUMNS][N_SENSOR_ROWS];
+bool available[N_SENSOR_COLUMNS][N_SENSOR_ROWS];  // True if sensor is available
 
 /* Calibration data */
 float Bx_cal_zero[N_SENSOR_COLUMNS][N_SENSOR_ROWS];
@@ -423,6 +423,7 @@ void setup() {
   int x,y;
   model_id model;
   int i2c_dev, default_i2c_addr, new_i2c_addr;
+  byte error;
 
   Serial.begin(115200);
   delay(1000); // Wait a bit for serial
@@ -480,8 +481,8 @@ void setup() {
     }
   }
   Serial.println("Sensor availability:");
-  for (y=0; y < N_Y; y++) {
-      for (x=0; x<N_X; x++) {
+  for (y=0; y < N_SENSOR_ROWS; y++) {
+      for (x=0; x<N_SENSOR_COLUMNS; x++) {
         Serial.print(available[x][y]?"+":"-");
       }
     Serial.println("");
