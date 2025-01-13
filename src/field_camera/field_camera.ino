@@ -60,6 +60,8 @@ enum model_id {TMAG_A = 0x35, TMAG_B = 0x22, TMAG_C = 0x78, TMAG_D = 0x44};
 #define N_MODELS 3
 model_id model_id_list[N_MODELS] = {TMAG_A, TMAG_B, TMAG_C}; // Which models are in our array?
 
+bool available[N_X][N_Y];  // True if sensor is available
+
 // ------------------------------------------------------
 // ===== 2. TFT LCD configuration
 // ------------------------------------------------------
@@ -421,7 +423,6 @@ void setup() {
   int x,y;
   model_id model;
   int i2c_dev, default_i2c_addr, new_i2c_addr;
-  TMAG5273 *tmag_object;
 
   Serial.begin(115200);
   delay(1000); // Wait a bit for serial
@@ -463,25 +464,33 @@ void setup() {
       Serial.print(" to  0x");
       Serial.println(new_i2c_addr,HEX);
       if (i2c_dev == 0) {
-        tmag_object = &tmag5273_i2c0;
+        tmag5273_i2c0.switchSensor(default_i2c_addr);
+        tmag5273_i2c0.modifyI2CAddress(new_i2c_addr); // change I2C address
+        delay(1);
+        Wire.beginTransmission(new_i2c_addr);
+        error = Wire.endTransmission();
       } else {
-        tmag_object = &tmag5273_i2c1;
+        tmag5273_i2c1.switchSensor(default_i2c_addr);
+        tmag5273_i2c1.modifyI2CAddress(new_i2c_addr); // change I2C address
+        delay(1);
+        Wire1.beginTransmission(new_i2c_addr);
+        error = Wire1.endTransmission();
       }
-      tmag_object->switchSensor(default_i2c_addr);
-      tmag_object->modifyI2CAddress(new_i2c_addr); // change I2C address
+      available[x][y] = (error == 0);
     }
-    delay(1);
-    Serial.println("Scanning I2C0");
-    scanner(&Wire);
-    Serial.println("Scanning I2C1");
-    scanner(&Wire1);
+  }
+  Serial.println("Sensor availability:");
+  for (y=0; y < N_Y; y++) {
+      for (x=0; x<N_X; x++) {
+        Serial.print(available[x][y]?"+":"-");
+      }
+    Serial.println("");
   }
   setup_tmag(&tmag5273_i2c0);
   setup_tmag(&tmag5273_i2c1);
 
   read_calib_file();
   
-
   // --- TFT setup --- 
 
   // Set up TFT, black screen medium font.
@@ -512,7 +521,7 @@ void setup() {
 // ------------------------------------------------------
 
 void loop() {
-  const int smooth_level = 3;  // Strength of autoregressive smoothing filter
+  const int smooth_level = 2;  // Strength of autoregressive smoothing filter
   int x,y;
 
   float Bx, By, Bz, T;
@@ -526,7 +535,13 @@ void loop() {
 
   for (y = 0; y< N_SENSOR_ROWS; y++) {
     for (x = 0; x < N_SENSOR_COLUMNS; x++) {
-      res = read_tmag_sensor(x,y,&Bx,&By,&Bz);
+      if (available[x][y]) {
+        res = read_tmag_sensor(x,y,&Bx,&By,&Bz);
+      } else {
+        Bx = 0;
+        By = 0;
+        Bz = 0;
+      }
 
       Bx = Bx - Bx_cal_zero[x][y];
       By = By - By_cal_zero[x][y];
